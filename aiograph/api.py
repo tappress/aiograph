@@ -1,11 +1,9 @@
 import asyncio
-
 import contextlib
-from contextvars import ContextVar
-
 import os
 import secrets
 import ssl
+from contextvars import ContextVar
 from pathlib import Path
 from typing import List, Optional, Union
 
@@ -112,19 +110,19 @@ class Telegraph:
         ssl_context = ssl.create_default_context(cafile=certifi.where())
 
         if isinstance(proxy, str) and (proxy.startswith('socks5://') or proxy.startswith('socks4://')):
-            from aiohttp_socks import SocksConnector
+            from aiohttp_socks import ProxyConnector
             from aiohttp_socks.utils import parse_proxy_url
 
-            socks_ver, host, port, username, password = parse_proxy_url(proxy)
+            proxy_type, host, port, username, password = parse_proxy_url(proxy)
             if proxy_auth:
                 if not username:
                     username = proxy_auth.login
                 if not password:
                     password = proxy_auth.password
 
-            connector = SocksConnector(socks_ver=socks_ver, host=host, port=port,
+            connector = ProxyConnector(proxy_type=proxy_type, host=host, port=port,
                                        username=username, password=password,
-                                       limit=connections_limit, ssl_context=ssl_context,
+                                       limit=connections_limit, ssl=ssl_context,
                                        rdns=True, loop=self.loop)
 
             self.proxy = None

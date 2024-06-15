@@ -1,6 +1,6 @@
 import pytest
 from aiohttp import BasicAuth
-from aiohttp_socks import SocksConnector, SocksVer
+from aiohttp_socks import SocksVer, ProxyConnector
 
 from aiograph import Telegraph, types
 from aiograph.utils import exceptions
@@ -94,9 +94,9 @@ def test_socks5_proxy():
     telegraph = Telegraph(proxy='socks5://example.com:1050', proxy_auth=BasicAuth('username', 'password'))
     connector = telegraph.session._connector
 
-    assert isinstance(connector, SocksConnector)
-    assert connector._socks_ver.value == SocksVer.SOCKS5
-    assert connector._socks_host == 'example.com'
-    assert connector._socks_port == 1050
-    assert connector._socks_username == 'username'
-    assert connector._socks_password == 'password'
+    assert isinstance(connector, ProxyConnector)
+    assert connector._proxy_type.value == SocksVer.SOCKS5
+    assert connector._proxy_host == 'example.com'
+    assert connector._proxy_port == 1050
+    assert connector._proxy_username == 'username'
+    assert connector._proxy_password == 'password'
